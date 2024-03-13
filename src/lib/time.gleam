@@ -1,25 +1,11 @@
+import gleam/int.{clamp}
+
 pub type Time {
   Time(hour: Int, minute: Int)
 }
 
-pub fn clamp_hour(hour: Int) -> Int {
-  case hour {
-    hour if hour >= 23 -> 23
-    hour if hour <= 0 -> 0
-    _ -> hour
-  }
-}
-
-pub fn clamp_minute(minute: Int) -> Int {
-  case minute {
-    minute if minute >= 59 -> 59
-    minute if minute <= 0 -> 0
-    _ -> minute
-  }
-}
-
 pub fn create(hour: Int, minute: Int) -> Time {
-  Time(clamp_hour(hour), clamp_minute(minute))
+  Time(clamp(hour, 0, 23), clamp(minute, 0, 59))
 }
 
 pub fn add(a: Time, b: Time) -> Time {
