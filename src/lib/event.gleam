@@ -1,28 +1,20 @@
+import lib/duration.{type Duration}
 import lib/time
 
 pub type Event {
-  Event(label: String, start: time.Time, end: time.Time)
+  Event(label: String, duration: Duration)
 }
 
-pub fn create(event: Event) -> Result(Event, Nil) {
-  case #(event.start, event.end) {
-    #(start, end) if end.hour > start.hour ->
-      Ok(Event(
-        event.label,
-        time.create(start.hour, start.minute),
-        time.create(end.hour, end.minute),
-      ))
-    #(start, end) if end.hour == start.hour && end.minute > start.minute ->
-      Ok(Event(
-        event.label,
-        time.create(start.hour, start.minute),
-        time.create(end.hour, end.minute),
-      ))
+pub fn new(event: Event) -> Result(Event, Nil) {
+  let #(start, end) = #(event.duration.start, event.duration.end)
+
+  let start = time.create(start.hour, start.minute)
+  let end = time.create(end.hour, end.minute)
+
+  let dur = duration.new(start, end)
+
+  case dur {
+    Ok(dur) -> Ok(Event(event.label, dur))
     _ -> Error(Nil)
   }
-}
-
-pub fn duration(event: Event) -> time.Time {
-  let #(a, b) = #(event.start, event.end)
-  time.Time(b.hour - a.hour, b.minute - a.minute)
 }
